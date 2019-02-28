@@ -18,7 +18,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.externals import joblib
 
-
+import hashlib
+import time
 
 
 app=Flask(__name__)
@@ -31,15 +32,14 @@ CORS(app,resources={r"/*": {"origins": "*"}})
 
 @app.route('/', methods=['POST','GET'])
 def index():
-        print(request.values.get("username"))
         # return [request.values.get("username"),request.values.get("pwd")]
-        js = {'username': request.values.get("username"),"password":request.values.get("pwd")}
-        return jsonify(js)
+        js = [{'username': request.values.get("username"),"password":request.values.get("pwd")}]
+        token()
+        return token()
         # region = request.form.get('region').encode("utf-8")
         # types = request.form.get('types').encode("utf-8")
         # print(region)
         # return printme(a)
-
 
 @app.route('/index', methods=['POST','GET'])
 def index_():
@@ -71,3 +71,23 @@ def data_post():
 
 if __name__=='__main__':
     app.run(debug=True)
+
+def t_stamp():
+    t = time.time()
+    t_stamp = int(t)
+    print('当前时间戳:', t_stamp)
+    return t_stamp
+
+def token():
+    # API_SECRET = "xxxx" #从接口对接负责人处拿到
+    # project_code = "xxxx"  #GET传递的项目编码，参数值请根据需要自行定义
+    account = "admin"   #GET传递的登录帐号，参数值请根据需要自行定义
+    time_stamp =str(t_stamp())  #int型的时间戳必须转化为str型，否则运行时会报错
+    hl = hashlib.md5()  # 创建md5对象，由于MD5模块在python3中被移除，在python3中使用hashlib模块进行md5操作
+    # strs = project_code + account + time_stamp + API_SECRET # 根据token加密规则，生成待加密信息
+    strs = account + time_stamp   # 根据token加密规则，生成待加密信息
+    hl.update(strs.encode("utf8"))  # 此处必须声明encode， 若为hl.update(str)  报错为： Unicode-objects must be encoded before hashing
+    token=hl.hexdigest()  #获取十六进制数据字符串值
+    print('MD5加密前为 ：',strs)
+    print('MD5加密后为 ：',token)
+    return token
