@@ -85,7 +85,8 @@ def token():
     time_stamp =str(t_stamp())  #int型的时间戳必须转化为str型，否则运行时会报错
     hl = hashlib.md5()  # 创建md5对象，由于MD5模块在python3中被移除，在python3中使用hashlib模块进行md5操作
     # strs = project_code + account + time_stamp + API_SECRET # 根据token加密规则，生成待加密信息
-    strs = account + time_stamp   # 根据token加密规则，生成待加密信息
+    # strs = account + time_stamp   # 根据token加密规则，生成待加密信息
+    strs = account # 根据token加密规则，生成待加密信息
     hl.update(strs.encode("utf8"))  # 此处必须声明encode， 若为hl.update(str)  报错为： Unicode-objects must be encoded before hashing
     token=hl.hexdigest()  #获取十六进制数据字符串值
     print('MD5加密前为 ：',strs)
