@@ -10,13 +10,6 @@ import re
 import sys
 import types
 from flask_cors import CORS
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix
-from sklearn.externals import joblib
 
 import hashlib
 import time
@@ -33,13 +26,18 @@ CORS(app,resources={r"/*": {"origins": "*"}})
 @app.route('/', methods=['POST','GET'])
 def index():
         # return [request.values.get("username"),request.values.get("pwd")]
-        js = [{'username': request.values.get("username"),"password":request.values.get("pwd")}]
-        token()
-        return token()
-        # region = request.form.get('region').encode("utf-8")
-        # types = request.form.get('types').encode("utf-8")
-        # print(region)
-        # return printme(a)
+        # js = [{'username': request.values.get("username"),"password":request.values.get("pwd")}]
+        if request.values.get("username") == '12345':  # 判断变量否为'python'
+            arr_res = {
+                'status': 1,
+                'token': token()
+            }
+        else:
+            arr_res = {
+                'status': 0,
+                'token': token()
+            }
+        return jsonify(arr_res);
 
 @app.route('/index', methods=['POST','GET'])
 def index_():
@@ -89,6 +87,10 @@ def token():
     strs = account # 根据token加密规则，生成待加密信息
     hl.update(strs.encode("utf8"))  # 此处必须声明encode， 若为hl.update(str)  报错为： Unicode-objects must be encoded before hashing
     token=hl.hexdigest()  #获取十六进制数据字符串值
-    print('MD5加密前为 ：',strs)
-    print('MD5加密后为 ：',token)
+    arr_res = {
+        'status': 0,
+        'token': token,
+    }
+    # print('MD5加密前为 ：',strs)
+    # print('MD5加密后为 ：',token)
     return token
