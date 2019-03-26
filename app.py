@@ -10,12 +10,14 @@ import re
 import sys
 import types
 from flask_cors import CORS
-
+from flask_socketio import SocketIO
 import hashlib
 import time
 
 
 app=Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 # r'/*' 是通配符，让本服务器所有的 URL 都允许跨域请求
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -68,7 +70,8 @@ def data_post():
     return jsonify(arr_res)
 
 if __name__=='__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    socketio.run(app, host='127.0.0.1', debug=True)
 
 def t_stamp():
     t = time.time()
